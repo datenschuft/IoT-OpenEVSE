@@ -8,6 +8,7 @@ based on https://blog.thesen.eu/stabiler-http-1-1-wlan-webserver-mit-dem-esp8266
 const char* ssid = "YOURSSID";
 const char* password = "YOURPASSWORD";
 
+
 unsigned long ulReqcount;
 unsigned long ulReconncount;
 boolean ignoreremote = false;
@@ -24,6 +25,7 @@ void setup()
   // prepare GPIO2
   pinMode(2, OUTPUT);
   digitalWrite(2, 1);
+  ignoreremote = false;
   
   // start serial
   Serial.begin(115200);
