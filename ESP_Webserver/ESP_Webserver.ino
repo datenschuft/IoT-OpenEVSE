@@ -5,13 +5,16 @@ based on https://blog.thesen.eu/stabiler-http-1-1-wlan-webserver-mit-dem-esp8266
 --------------------------------------------------*/
 #include <ESP8266WiFi.h>
 
-const char* ssid = "YOURSSID";
-const char* password = "YOURPASSWORD";
+//const char* ssid = "YOURSSID";
+//const char* password = "YOURPASSWORD";
 
+const char* ssid = "wenger";
+const char* password = "Zc1cmoPh";
 
 unsigned long ulReqcount;
 unsigned long ulReconncount;
 boolean ignoreremote = false;
+
 
 // Create an instance of the server on Port 80
 WiFiServer server(80);
@@ -24,7 +27,9 @@ void setup()
   
   // prepare GPIO2
   pinMode(2, OUTPUT);
+  pinMode(0, OUTPUT);
   digitalWrite(2, 1);
+  digitalWrite(0, 0);
   ignoreremote = false;
   
   // start serial
@@ -39,32 +44,21 @@ void setup()
 void WiFiStart()
 {
   ulReconncount++;
-  
-  // Connect to WiFi network
-  //Serial.println();
-  //Serial.println();
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
-  
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
-  }
-  //Serial.println("");
-  //Serial.println("WiFi connected");
-  
+  }  
   // Start the server
   server.begin();
-  //Serial.println("Server started");
-
-  // Print the IP address
-  //Serial.println(WiFi.localIP());
+  String ip = WiFi.localIP().toString();
+  communicate ("FP 0 0 WiFi connected  ");
+  delay(100);
+  communicate ("FP 0 1                 ");
+  delay(100);
+  communicate ("FP 0 1 "+ ip);
+  delay(100);
 }
-
-// read serial commuinication
-
 
 // send serial communication
 int communicate (String s) {
@@ -86,6 +80,7 @@ int communicate (String s) {
   checksumshort.toUpperCase();
   Serial.print(s + "*" + checksumshort);
   Serial.println(); 
+
 }
 
 
@@ -209,6 +204,8 @@ void loop()
     sResponse += "<p><a href=\"?control=EVSE\"><button>Evse-Status</button></a></p>";
     sResponse += "<p><a href=\"?control=noauto\"><button>disable remote control</button></a></p>";
     sResponse += "<p><a href=\"?control=auto\"><button>enable remote control</button></a></p>";
+    sResponse += "<p><a href=\"?control=dconnect\"><button>disconnect</button></a></p>";
+    sResponse += "<p><a href=\"?control=connect\"><button>connect</button></a></p>";
     
     //////////////////////
     // react on parameters
@@ -231,6 +228,14 @@ void loop()
               content.concat(character);
           }
           sResponse += "serial get:" + content + "<BR>";
+      }
+      else if (sCmd.indexOf("dconnect")>=0)
+      {
+        digitalWrite(0, 1);
+      }
+      else if (sCmd.indexOf("connect")>=0)
+      {
+        digitalWrite(0, 0);
       }
       else if (sCmd.indexOf("noauto")>=0)
       {
@@ -292,5 +297,5 @@ void loop()
   
   // and stop the client
   client.stop();
-  Serial.println("Client disonnected");
+  //Serial.println("Client disonnected");
 }
