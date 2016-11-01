@@ -50,6 +50,7 @@ void WiFiStart()
     communicate ("FP 0 0 no WiFi         ");
     delay(500);
     communicate ("FP 0 0 retry...        ");
+    delay(500);
   }  
   // Start the server
   server.begin();
