@@ -8,8 +8,8 @@ based on https://blog.thesen.eu/stabiler-http-1-1-wlan-webserver-mit-dem-esp8266
 //const char* ssid = "YOURSSID";
 //const char* password = "YOURPASSWORD";
 
-const char* ssid = "wenger";
-const char* password = "Zc1cmoPh";
+const char* ssid = "carport";
+const char* password = "less-security";
 
 unsigned long ulReqcount;
 unsigned long ulReconncount;
@@ -38,7 +38,7 @@ void setup()
   
   // inital connect
   WiFi.mode(WIFI_STA);
-  WiFiStart();
+  //WiFiStart();
 }
 
 void WiFiStart()
@@ -47,7 +47,9 @@ void WiFiStart()
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
+    communicate ("FP 0 0 no WiFi         ");
     delay(500);
+    communicate ("FP 0 0 retry...        ");
   }  
   // Start the server
   server.begin();
